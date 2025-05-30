@@ -1,41 +1,47 @@
-import java.util.Scanner;
+import com.google.gson.Gson;
 
-public class Conversor {
-    public static void main(String[] args) {
-       double valor = 0;
-       String moeda;
-       int opcao = 0;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
-       String menu = """
-               ==================================================================================================================
-                       Escolha uma das opções abaixo para efetivar a conversão:
-                       1 - Dolar [USD] --> Real brasileiro [BRL]
-                       2 - Real brasileiro [BRL] --> Dolar [USD]
-                       3 - Yuan chinesa [CNY] --> Real brasileiro [BRL]
-                       4 - Real brasileiro [BRL] --> Yuan chinesa [CNY]
-                       5 - Shekel israelense [ILS] --> Real brasileiro [BRL]
-                       6 - Real brasileiro [BRL] --> Shekel israelense [ILS] 
-                       7 - Sair
-               ==================================================================================================================
-             \n """;
+public class ConverteMoeda {
 
-        Scanner leitura = new Scanner(System.in);
-        System.out.println("Seja bem vindo(a) ao nosso conversor de moedas:\n ");
+    private static final String API_KEY = "73846b2e5f09f10f2aed121c"; // Your API key
 
+    public TaxaDeConversao buscaMoeda(String moedaBase) { // Renamed parameter for clarity
+        // Dynamically build the URI using the provided moedaBase
+        String url = "https://v6.exchangerate-api.com/v6/" + API_KEY + "/latest/" + moedaBase;
+        URI buscaMoeda = URI.create(url);
 
-        int sair = 7;
-        while (opcao !=7) {
-            System.out.println(menu);
-            opcao = leitura.nextInt();
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(buscaMoeda)
+                .build();
 
-            if (opcao == 1) {
-                System.out.println("O valor" + " " + valor + "convertido é: " +" valor convertido" + " " );
+        HttpResponse<String> response;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            // Check for successful HTTP status code
+            if (response.statusCode() != 200) {
+                System.err.println("Erro na API: Código de status HTTP " + response.statusCode());
+                System.err.println("Corpo da resposta: " + response.body());
+                throw new IOException("Falha ao buscar dados da API. Status: " + response.statusCode());
             }
-
+        } catch (IOException | InterruptedException e) {
+            // Re-throwing as RuntimeException is acceptable here given the context,
+            // but a more specific custom exception might be better in larger apps.
+            throw new RuntimeException("Não consegui fazer a conversão a partir desta opção. Erro: " + e.getMessage(), e);
         }
 
+        String json = response.body();
 
+        Gson gson = new Gson();
+        TaxaDeConversao minhaTaxaDeConversao = gson.fromJson(json, TaxaDeConversao.class);
 
-
+        return minhaTaxaDeConversao;
     }
 }
+
+
