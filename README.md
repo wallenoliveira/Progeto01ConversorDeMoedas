@@ -19,7 +19,7 @@
 
 * [Aplicação](#aplicação)
 
-* [Ferramentas utilizadas](#ferramentas-utilizadas)
+* [Tecnologias utilizadas](#tecnologias-utilizadas)
 
 * [Desenvolvedor](#desenvolvedor)
 
