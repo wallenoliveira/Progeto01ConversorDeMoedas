@@ -39,8 +39,8 @@ Projeto em desenvolvimento para o curso de Especialização em Back-End Alura ON
 
 ## Aplicação
 
-<video>
-[video-conversor-moeda.mp4](src/video-conversor-moeda.mp4)
+https://github.com/wallenoliveira/Progeto01ConversorDeMoedas/blob/main/conversorMoeda.gif
+
 
 ## Tecnologias utilizadas
 * [Java](#Java)
